@@ -15,11 +15,15 @@ import 'firebase_options.dart';
 
 //check in secure storage if user is logged in
 
-Future<String> checkStorage() async {
+class Global {
+  static String authToken = "";
+}
+
+Future<void> checkStorage() async {
   final storage = FlutterSecureStorage();
   String? token = await storage.read(key: "authToken");
 
-  return token ?? "";
+  Global.authToken = token ?? "";
 }
 
 void main() async {
@@ -27,6 +31,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await checkStorage();
   runApp(const MyApp());
 }
 
@@ -36,8 +41,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    var apiClient =
-        ApiClient(apiUrl, null, null, ApiClientState.unauthenticated);
+    var apiClient = ApiClient(
+        apiUrl, Global.authToken, null, ApiClientState.unauthenticated);
     return MultiProvider(
         providers: [
           // ignore: prefer_const_constructors
