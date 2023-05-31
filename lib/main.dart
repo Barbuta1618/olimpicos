@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:olimpicos/screens/dashboard.dart';
 import 'package:olimpicos/screens/profile_screen.dart';
 import 'package:olimpicos/screens/register_screen.dart';
 import 'package:routemaster/routemaster.dart';
@@ -6,8 +8,25 @@ import 'package:provider/provider.dart';
 import 'utils/constants.dart';
 import 'controllers/api_client.dart';
 import 'screens/login_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+// ...
+
+//check in secure storage if user is logged in
+
+Future<String> checkStorage() async {
+  final storage = FlutterSecureStorage();
+  String? token = await storage.read(key: "authToken");
+
+  return token ?? "";
+}
+
+void main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -17,24 +36,22 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    var apiClient =
+        ApiClient(apiUrl, null, null, ApiClientState.unauthenticated);
     return MultiProvider(
         providers: [
           // ignore: prefer_const_constructors
-          ChangeNotifierProvider(
-              create: (_) => ApiClient(
-                  apiUrl, null, null, ApiClientState.unauthenticated)),
+          ChangeNotifierProvider(create: (_) => apiClient),
         ],
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
           routerDelegate: RoutemasterDelegate(
               routesBuilder: (context) => RouteMap(routes: {
-                    '/': (_) => const Redirect(loginPath),
                     loginPath: (routeData) =>
-                        // Provider.of<ApiClient>(context, listen: false).state ==
-                        //         ApiClientState.authenticated
-                        //     ? const Redirect(foldersPath)
-                        //     :
-                        const MaterialPage(child: LoginScreen()),
+                        Provider.of<ApiClient>(context, listen: false).state ==
+                                ApiClientState.authenticated
+                            ? const Redirect(dashboardPath)
+                            : MaterialPage(child: LoginScreen()),
                     registerPath: (routeData) =>
                         MaterialPage(child: RegisterScreen()),
                     profilePath: (routeData) =>
@@ -42,6 +59,9 @@ class MyApp extends StatelessWidget {
                                 ApiClientState.authenticated
                             ? MaterialPage(child: ProfileScreen())
                             : const Redirect(loginPath),
+                    dashboardPath: (routeData) =>
+                        MaterialPage(child: Dashboard()),
+                    '/': (_) => const Redirect(loginPath),
                   })),
           // ignore: prefer_const_constructors
           routeInformationParser: RoutemasterParser(),

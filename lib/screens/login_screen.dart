@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 width: 100,
                                 height: 100,
                                 child: CustomInputField(
-                                  titleText: "Username",
+                                  titleText: "Email",
                                   controller: usernameController,
                                   textFieldDimension: 40,
                                   titleFontSize: 18,
@@ -134,17 +134,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                   onPressed: () async {
-                                    String username = usernameController.text;
+                                    String email = usernameController.text;
                                     String password = passwordController.text;
 
                                     bool resp = await Provider.of<ApiClient>(
                                             context,
                                             listen: false)
-                                        .auth(username, password);
+                                        .login(email, password);
 
-                                    if (!resp) {
+                                    if (resp) {
                                       Routemaster.of(context)
-                                          .replace(profilePath);
+                                          .replace(dashboardPath);
                                     }
                                   },
                                   child: Container(

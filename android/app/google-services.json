@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1054907445264",
+    "project_id": "olimpiacos-21c4b",
+    "storage_bucket": "olimpiacos-21c4b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1054907445264:android:c8469c3ad04616ec18da95",
+        "android_client_info": {
+          "package_name": "com.example.olimpicos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_yi1IwGwy0yHnihFyGkQETt0SI3EQ8EA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
